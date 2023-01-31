@@ -1,0 +1,213 @@
+version: '3.5'
+
+# 服务容器配置
+services:
+  # nginx 服务
+  nginx:
+    build: ./container/nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf/default.conf:/etc/nginx/default.conf
+    depends_on:
+      - srs-console
+      - srs-gui
+    networks:
+      - srs-admin
+  
+  # SRS 服务器
+  srs-server:
+    build: 
+      context: ./container/srs-server
+    container_name: srs-server
+    restart: always
+    command: bash -c "/usr/local/srs/objs/srs -c /usr/local/srs/conf/srs.conf"
+    environment:
+      - TZ=${TZ}
+    ports:
+      - "8935:1935"
+      - "8080:8080"
+      - "${SRS_API_PORT}:1985"
+      - "8000:8000/udp"
+    volumes:
+      - ./nginx/live:/usr/local/srs/objs/nginx/html/live
+      - ${CONFIG_PATH_HOST}/srs-server/srs.conf:/usr/local/srs/conf/srs.conf
+    networks:
+      - srs-admin
+
+  # srs-manage 服务
+  srs-manage:
+    build: 
+      context: ./container/srs-manage
+    container_name: srs-manage
+    restart: always
+    environment:
+      - TZ=${TZ}
+      - MGMT_PASSWORD=baacad4f6169d083
+      - SOURCE=gitee
+      - CLOUD=DEV
+      - REGION=ap-beijing
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+      - PROMETHEUS_HOST=prometheus
+      - PROMETHEUS_PORT=${PROMETHEUS_PORT}
+      - SRS_SERVER_HOST=srs-server
+    volumes:
+      - ${CODE_PATH_HOST}/srs-manage:/home/app
+    working_dir: /home/app
+    ports:
+      - "${SRS_MANAGE_PORT}:8022"
+    command: ['npm', 'start']
+    stdin_open: true
+    tty: true
+    networks:
+      - srs-admin
+    depends_on:
+      - redis
+     
+  # srs-console 服务
+  srs-console:
+    build: 
+      context: ./container/srs-console
+    container_name: srs-console
+    restart: always
+    environment:
+      - TZ=${TZ}
+      - REDIS_HOST=redis
+      - SRS_MANAGE_HOST=srs-manage
+    volumes: 
+      - ${CODE_PATH_HOST}/srs-console:/home/app
+    working_dir: /home/app
+    ports:
+      - "${SRS_CONSOLE_PORT}:8024"
+    depends_on:
+      - srs-manage
+    command: ['npm', 'start']
+    stdin_open: true
+    tty: true
+    networks:
+      - srs-admin
+    
+  # srs-gui 服务
+  srs-gui:
+    build: 
+      context: ./container/srs-gui
+    container_name: srs-gui
+    restart: always
+    environment:
+      - TZ=${TZ}
+      - PORT=${SRS_GUI_PORT}
+      - MGMT_HOST=srs-console
+      - MGMT_PORT=${SRS_CONSOLE_PORT}
+      - PROMETHEUS_HOST=prometheus
+      - PROMETHEUS_PORT=${PROMETHEUS_PORT}
+      - SRS_HOST=srs-server
+    volumes: 
+        - ${CODE_PATH_HOST}/srs-gui:/home/app
+    working_dir: /home/app
+    ports:
+      - "${SRS_GUI_PORT}:${SRS_GUI_PORT}"
+    depends_on:
+      - srs-console
+    command: ['npm', 'start']
+    stdin_open: true
+    tty: true
+    networks:
+      - srs-admin
+  
+  # redis 服务
+  redis:
+    build: 
+      context: ./container/redis
+    container_name: redis-server
+    restart: always
+    environment:
+      - TZ=${TZ}
+    privileged: true
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - ${CACHE_PATH_HOST}/redis:/data
+    networks:
+      - srs-admin
+  
+  # redis-manage 服务
+  redis-manage:
+    build:
+      context: ./container/redis-manage
+    container_name: redis-manage
+    restart: always
+    environment:
+      - name=value
+      - TZ=${TZ}
+      - ADMIN_USER=${REDIS_MANAGE_USERNAME}           
+      - ADMIN_PASS=${REDIS_MANAGE_PASSWORD}           
+      - REDIS_1_HOST=${REDIS_MANAGE_CONNECT_HOST}      
+      - REDIS_1_PORT=${REDIS_MANAGE_CONNECT_PORT} 
+    ports:
+      - "${REDIS_MANAGE_PORT}:80" 
+    depends_on:
+      - redis
+    networks:
+      - srs-admin
+  
+  # prometheus 服务
+  prometheus:
+    build: 
+      context: ./container/prometheus
+    container_name: prometheus-server
+    restart: always
+    environment:
+      - TZ=${TZ}
+    privileged: true
+    ports:
+      - "${PROMETHEUS_PORT}:9090"  
+    volumes:
+      - ${CONFIG_PATH_HOST}/prometheus/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+    networks:
+      - srs-admin
+  
+  # grafana 服务
+  # grafana:
+  #   build: 
+  #     context: ./container/grafana
+  #   container_name: grafana-client
+  #   restart: always
+  #   environment:
+  #     - TZ=${TZ}
+  #   ports:
+  #     - "${GRAFANA_PORT}:3000" 
+  #   networks:
+  #     - srs-admin
+
+  # node-exporter 服务
+  node-exporter:
+    build: 
+      context: ./container/node-exporter
+    container_name: node-exporter
+    restart: always
+    environment:
+      - TZ=${TZ}
+    ports:
+      - "${NODE_EXPORTER_PORT}:9100"
+    networks:
+      - srs-admin
+
+# 容器网络配置
+networks:
+  srs-admin:
+    driver: ${NETWORK_DRIVER}
+
+
+
+
+    
+
+
+
+
+
+    
+  
