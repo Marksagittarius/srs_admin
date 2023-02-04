@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.8'
 
 # 服务容器配置
 services:
@@ -23,17 +23,17 @@ services:
       context: ./container/srs-server
     container_name: srs-server
     restart: always
-    command: bash -c "/usr/local/srs/objs/srs -c /usr/local/srs/conf/srs.conf"
+    command: bash -c "./objs/srs -c /usr/local/srs/conf/srs.conf"
     environment:
       - TZ=${TZ}
+      - CANDIDATE=192.168.2.110
     ports:
       - "8935:1935"
       - "8080:8080"
       - "${SRS_API_PORT}:1985"
       - "8000:8000/udp"
     volumes:
-      - ./nginx/live:/usr/local/srs/objs/nginx/html/live
-      - ${CONFIG_PATH_HOST}/srs-server/srs.conf:/usr/local/srs/conf/srs.conf
+      - ${CONFIG_PATH_HOST}/srs-server/conf/:/usr/local/srs/conf/
     networks:
       - srs-admin
 
@@ -82,8 +82,6 @@ services:
     working_dir: /home/app
     ports:
       - "${SRS_CONSOLE_PORT}:8024"
-    depends_on:
-      - srs-manage
     command: ['npm', 'start']
     stdin_open: true
     tty: true
@@ -109,9 +107,7 @@ services:
     working_dir: /home/app
     ports:
       - "${SRS_GUI_PORT}:${SRS_GUI_PORT}"
-    depends_on:
-      - srs-console
-    command: ['npm', 'start']
+    command: "npm start"
     stdin_open: true
     tty: true
     networks:
@@ -199,15 +195,3 @@ services:
 networks:
   srs-admin:
     driver: ${NETWORK_DRIVER}
-
-
-
-
-    
-
-
-
-
-
-    
-  

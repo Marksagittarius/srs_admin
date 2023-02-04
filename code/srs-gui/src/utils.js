@@ -1,7 +1,13 @@
 const SRS_TERRAFORM_TOKEN = 'SRS_TERRAFORM_TOKEN';
 const SRS_CLOUD_LOCALE = 'SRS_CLOUD_LOCALE';
 
-const utils = require('./js-core/utils');
+const streamURL = (vhost, app, stream) => {
+    if (vhost === '__defaultVhost__') {
+        return `${app}/${stream}`;
+    } else {
+        return `${vhost}/${app}/${stream}`;
+    }
+};
 
 export const Token = {
     save(data) {
@@ -31,7 +37,7 @@ export const Locale = {
         return this._cache;
     },
     current() {
-        return this._cache?.lang || process.env.REACT_APP_LOCALE || 'zh';
+        return this._cache?.lang || 'zh';
     }
 };
 
@@ -114,7 +120,7 @@ export const Errors = {
 
 export const StreamURL = {
     build: (vhost, app, stream) => {
-        return utils.streamURL(vhost, app, stream);
+        return streamURL(vhost, app, stream);
     },
 };
 

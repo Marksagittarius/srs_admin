@@ -4,7 +4,7 @@
     "description": "API for srs-cloud mgmt",
     "main": "index.js",
     "scripts": {
-        "start": "env NODE_ENV=development node .",
+        "start": "npm install && env NODE_ENV=development node .",
         "build": "exit 0",
         "test": "jest --watchAll=false --passWithNoTests",
         "testWatch": "jest --watchAll=true --passWithNoTests"
@@ -21,7 +21,6 @@
         "dotenv": "^14.2.0",
         "ioredis": "^4.28.3",
         "jest": "^27.5.1",
-        "js-core": "file:../js-core",
         "jsonwebtoken": "^8.5.1",
         "koa": "^2.13.4",
         "koa-bodyparser": "^4.3.0",

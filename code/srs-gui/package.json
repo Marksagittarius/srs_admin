@@ -1,7 +1,13 @@
 {
-    "name": "mgmt",
-    "version": "1.0.0",
+    "name": "srs-gui",
     "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "start": "npm install && vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
     "dependencies": {
         "@testing-library/jest-dom": "^5.16.1",
         "@testing-library/react": "^12.1.2",
@@ -11,7 +17,6 @@
         "country-flag-icons": "^1.4.25",
         "http-proxy-middleware": "^2.0.2",
         "i18next": "^21.6.14",
-        "js-core": "file:./js-core",
         "moment": "^2.29.1",
         "react": "^17.0.2",
         "react-bootstrap": "^2.1.1",
@@ -21,20 +26,18 @@
         "react-i18next": "^11.16.2",
         "react-qr-code": "^2.0.3",
         "react-router-dom": "^6.2.1",
-        "react-scripts": "5.0.0",
         "recharts": "^2.1.8",
+        "@vitejs/plugin-react": "1.1.1",
+        "vite": "2.7.0",
         "semver": "^7.3.5",
         "uuid": "^8.3.2",
         "web-vitals": "^2.1.4"
     },
-    "scripts": {
-        "start": "env REACT_APP_LOCALE=zh react-scripts start",
-        "startZh": "env PUBLIC_URL=/mgmt REACT_APP_LOCALE=zh react-scripts start",
-        "startEn": "env PUBLIC_URL=/mgmt REACT_APP_LOCALE=en react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test --watchAll=false",
-        "testWatch": "react-scripts test --watchAll=true",
-        "eject": "react-scripts eject"
+    "devDependencies": {
+        "@types/react": "^18.0.27",
+        "@types/react-dom": "^18.0.10",
+        "@vitejs/plugin-react-swc": "^3.0.0",
+        "vite": "^4.1.0"
     },
     "eslintConfig": {
         "extends": [
