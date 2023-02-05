@@ -23,7 +23,7 @@ $ cd srs_admin
 
 # Deploy the containers
 # Make sure that you have the environment of docker as well as the docker-compose deployed.
-$ docker-compose -d
+$ docker-compose up -d
 ```
 
 ## :memo: TODO

@@ -23,7 +23,7 @@ $ cd srs_admin
 
 # 部署容器集群
 # 保证您的电脑已经部署了 docker 与 docker-compose 开发环境
-$ docker-compose -d
+$ docker-compose up -d
 ```
 
 ## :memo: TODO
