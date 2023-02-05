@@ -84,7 +84,7 @@ function AppImpl() {
                 <Container>Loading...</Container>
             </>}
             {!loading && <>
-                <BrowserRouter basename={window.PUBLIC_URL}>
+                <BrowserRouter basename={"/"}>
                     <Navigator {...{ initialized, token }} />
                     <Routes>
                         <Route path="/" element={<AppRoot />} />

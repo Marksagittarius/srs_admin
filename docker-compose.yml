@@ -10,7 +10,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/conf/default.conf:/etc/nginx/default.conf
+      - ./nginx/conf/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - srs-console
       - srs-gui
@@ -53,6 +53,8 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - PROMETHEUS_HOST=prometheus
       - PROMETHEUS_PORT=${PROMETHEUS_PORT}
+      - TERRAFORM_HOST=srs-console
+      - TERRAFORM_PORT=${SRS_CONSOLE_PORT}
       - SRS_SERVER_HOST=srs-server
     volumes:
       - ${CODE_PATH_HOST}/srs-manage:/home/app
@@ -112,6 +114,8 @@ services:
     tty: true
     networks:
       - srs-admin
+    depends_on:
+      - srs-console
   
   # redis 服务
   redis:

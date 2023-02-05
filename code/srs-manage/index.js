@@ -1,11 +1,7 @@
 'use strict';
 
-const TERRAFORM_PORT = '8024';
-const dotenv = require('dotenv');
-const fs = require('fs');
 const path = require('path');
 const utils = require('./js-core/utils');
-utils.reloadEnv(dotenv, fs, path);
 console.log(`load envs MGMT_PASSWORD=${'*'.repeat(process.env.MGMT_PASSWORD?.length)}`);
 
 const Koa = require('koa');
@@ -36,8 +32,12 @@ function withLogs(options) {
     };
 }
 
+const SRS_SERVER_HOST = process.env.SRS_SERVER_HOST;
+const TERRAFORM_HOST = process.env.TERRAFORM_HOST;
+const TERRAFORM_PORT = process.env.TERRAFORM_PORT;
 const PROMETHEUS_HOST = process.env.PROMETHEUS_HOST;
 const PROMETHEUS_PORT = process.env.PROMETHEUS_PORT;
+
 app.use(proxy('/prometheus', withLogs({ target: `http://${PROMETHEUS_HOST}:${PROMETHEUS_PORT}/` })));
 
 utils.srsProxy(staticCache, app, path.join(__dirname, 'containers/www/console/'), '/console/');
@@ -47,17 +47,16 @@ utils.srsProxy(staticCache, app, path.join(__dirname, 'containers/www/tools/'), 
     '/tools/xgplayer.html',
 ]);
 
-app.use(proxy('/terraform/v1/tencent/', withLogs({ target: `http://127.0.0.1:${TERRAFORM_PORT}/` })));
+app.use(proxy('/terraform/v1/tencent/', withLogs({ target: `http://${TERRAFORM_HOST}:${TERRAFORM_PORT}/` })));
 
-app.use(proxy('/terraform/v1/ffmpeg/', withLogs({ target: `http://127.0.0.1:${TERRAFORM_PORT}/` })));
+app.use(proxy('/terraform/v1/ffmpeg/', withLogs({ target: `http://${TERRAFORM_HOST}:${TERRAFORM_PORT}/` })));
 
-app.use(proxy('/terraform/v1/mgmt/', withLogs({ target: `http://127.0.0.1:${TERRAFORM_PORT}/` })));
+app.use(proxy('/terraform/v1/mgmt/', withLogs({ target: `http://${TERRAFORM_HOST}:${TERRAFORM_PORT}/` })));
 // The UI proxy to platform UI, system mgmt UI.
-app.use(proxy('/mgmt/', withLogs({ target: `http://127.0.0.1:${TERRAFORM_PORT}/` })));
+app.use(proxy('/mgmt/', withLogs({ target: `http://${TERRAFORM_HOST}:${TERRAFORM_PORT}/` })));
 // For automatic HTTPS by letsencrypt, for certbot to verify the domain.
-app.use(proxy('/.well-known/acme-challenge/', withLogs({ target: `http://127.0.0.1:${TERRAFORM_PORT}/` })));
+app.use(proxy('/.well-known/acme-challenge/', withLogs({ target: `http://${TERRAFORM_HOST}:${TERRAFORM_PORT}/` })));
 
-const SRS_SERVER_HOST = process.env.SRS_SERVER_HOST;
 app.use(proxy('/api/', withLogs({ target: `http://${SRS_SERVER_HOST}:1985/` })));
 app.use(proxy('/rtc/', withLogs({ target: `http://${SRS_SERVER_HOST}:1985/` })));
 app.use(proxy('/*/*.(flv|m3u8|ts|aac|mp3)', withLogs({ target: `${SRS_SERVER_HOST}:8080/` })));
