@@ -17,7 +17,7 @@
 
 ```shell
 # 拷贝源代码至本地环境
-$ git clone https://github.com/Marksagittarius/srs_admain
+$ git clone https://github.com/Marksagittarius/srs_admin
 
 $ cd srs_admin
 

@@ -17,7 +17,7 @@ A set of integrated streaming media development environment based on SRS.
 
 ```shell
 # Clone the code to your local environment.
-$ git clone https://github.com/Marksagittarius/srs_admain
+$ git clone https://github.com/Marksagittarius/srs_admin
 
 $ cd srs_admin
 
