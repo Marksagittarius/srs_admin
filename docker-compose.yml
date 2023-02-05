@@ -170,17 +170,25 @@ services:
       - srs-admin
   
   # grafana 服务
-  # grafana:
-  #   build: 
-  #     context: ./container/grafana
-  #   container_name: grafana-client
-  #   restart: always
-  #   environment:
-  #     - TZ=${TZ}
-  #   ports:
-  #     - "${GRAFANA_PORT}:3000" 
-  #   networks:
-  #     - srs-admin
+  grafana:
+    build: 
+      context: ./container/grafana
+    container_name: grafana-client
+    restart: always
+    environment:
+      - TZ=${TZ}
+      - GF_SERVER_HTTP_PORT=${GRAFANA_PORT}
+    privileged: true
+    ports:
+      - "${GRAFANA_PORT}:${GRAFANA_PORT}" 
+    volumes:
+      - ${CONFIG_PATH_HOST}/grafana/dashboards/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
+      - ${CONFIG_PATH_HOST}/grafana/provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ${CONFIG_PATH_HOST}/grafana/provisioning/datasource-compose.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+    expose:
+      - "3000"
+    networks:
+      - srs-admin
 
   # node-exporter 服务
   node-exporter:
