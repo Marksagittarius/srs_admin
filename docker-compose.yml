@@ -182,9 +182,9 @@ services:
     ports:
       - "${GRAFANA_PORT}:${GRAFANA_PORT}" 
     volumes:
-      - ${CONFIG_PATH_HOST}/grafana/dashboards/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
-      - ${CONFIG_PATH_HOST}/grafana/provisioning/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
-      - ${CONFIG_PATH_HOST}/grafana/provisioning/datasource-compose.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ${CONFIG_PATH_HOST}/grafana/dashboards/:/var/lib/grafana/dashboards/
+      - ${CONFIG_PATH_HOST}/grafana/provisioning/:/etc/grafana/provisioning/dashboards/
+      
     expose:
       - "3000"
     networks:
@@ -203,6 +203,32 @@ services:
     networks:
       - srs-admin
 
+  # Alertmanger 服务
+  alertmanger:
+    build: 
+      context: ./container/alertmanager
+    container_name: alertmanager
+    hostname: alertmanager
+    restart: always
+    ports:
+      - "${ALERTMANGER_PORT}:9003"
+    volumes:
+      - ${CONFIG_PATH_HOST}:/alertmanager/rootfs:ro
+      - ${CONFIG_PATH_HOST}/alertmanager/var/run:/var/run:rw
+      - ${CONFIG_PATH_HOST}/alertmanager/sys:/sys:ro
+      - ${CONFIG_PATH_HOST}/alertmanager/var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - srs-admin
+
+  cadvisor:
+    build:
+      context: ./container/cadvisor
+    container_name: cadvisor 
+    restart: always
+    ports:
+      - "${CADVISOR_PORT}:8080"
+    networks:
+      - srs-admin
 # 容器网络配置
 networks:
   srs-admin:
