@@ -22,11 +22,8 @@ export default function Navigator({ initialized, token, localChanged }) {
         const r0 = `${location.pathname}${location.search}`;
         setNavs([
             { eventKey: '1', to: '/routers-dashboard', text: t('nav.dashboard') },
-            { eventKey: '2', to: '/routers-scenario', text: t('nav.scenario') },
-            { eventKey: '3', to: '/routers-settings', text: t('nav.system') },
-            { eventKey: '4', to: '/routers-components', text: t('nav.component') },
-            { eventKey: '5', to: '/routers-contact', text: t('nav.contact') },
-            { eventKey: '6', to: '/routers-logout', text: t('nav.logout') },
+            { eventKey: '2', to: '/routers-settings', text: t('nav.system') },
+            { eventKey: '3', to: '/routers-logout', text: t('nav.logout') },
         ].map(e => {
             if (r0.indexOf(e.to) >= 0) {
                 e.className = 'text-light';
