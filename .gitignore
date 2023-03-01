@@ -1,5 +1,5 @@
 .vscode
 node_modules
 certbot
-*.rdb
+dump.rdb
 *.log

@@ -121,7 +121,7 @@ services:
   redis:
     build: 
       context: ./container/redis
-    container_name: redis-server
+    container_name: srs-redis
     restart: always
     environment:
       - TZ=${TZ}
@@ -242,6 +242,8 @@ services:
     ports:
       - "${ELASTICSEARCH_PORT_1}:9200"
       - "${ELASTICSEARCH_PORT_2}:9300"
+    expose:
+      - "9200"
     networks:
       - srs-admin
 
@@ -253,6 +255,7 @@ services:
     restart: always
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
       - I18N_LOCALE=zh-CN
     ports:
       - "${KIBANA_PORT}:5601"
@@ -266,10 +269,12 @@ services:
     restart: always
     volumes:
       - ${CONFIG_PATH_HOST}/fluentd/:/fluentd/etc/
-      - ${LOG_PATH_HOST}/fluentd/:/etc/logs/
+      - ${LOG_PATH_HOST}/fluentd/:/logs
     ports:
       - "${FLUENTD_PORT}:24224"
       - "${FLUENTD_PORT}:24224/udp"
+    networks:
+      - srs-admin
 
 # 容器网络配置
 networks:

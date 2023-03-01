@@ -1,3 +1,3 @@
-FROM kibana:7.6.0
+FROM docker.elastic.co/kibana/kibana:7.13.1
 
 LABEL maintainer="hashorsex@gmail.com"
